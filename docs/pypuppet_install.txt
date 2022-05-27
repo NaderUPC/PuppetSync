@@ -10,7 +10,7 @@ The module defaults to using an unauthenticated SSL connection.
 You may want to create and use a client SSL key/certificate signed by the Puppet CA.
 On the puppet master (with root privileges):
 
-    puppet cert generate api
+    puppet cert generate api (**)
 
 Replace api with another certname if desired.
 
@@ -21,3 +21,7 @@ On Debian, $vardir defaults to /var/lib/puppet.
 
 
 [!] To allow access to the REST API, the puppet master auth.conf file needs to be changed.
+
+
+** --> puppetserver ca --verbose generate --certname pypuppet-gn6_api
+Debe estar firmado por el Puppet CA, no puede ser selfsigned.
