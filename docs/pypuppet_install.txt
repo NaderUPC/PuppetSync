@@ -1,0 +1,23 @@
+pip3 install https://github.com/daradib/pypuppet/archive/master.tar.gz
+
+(https://github.com/daradib/pypuppet)
+
+DEPENDANCY: PyYAML --> pip3 install --upgrade pyyaml
+
+
+
+The module defaults to using an unauthenticated SSL connection.
+You may want to create and use a client SSL key/certificate signed by the Puppet CA.
+On the puppet master (with root privileges):
+
+    puppet cert generate api
+
+Replace api with another certname if desired.
+
+This will generate $vardir/ssl/private_keys/api.pem and $vardir/ssl/certs/api.pem, 
+which should be moved or otherwise made accessible to the user and host using pypuppet, if necessary.
+On Debian, $vardir defaults to /var/lib/puppet.
+
+
+
+[!] To allow access to the REST API, the puppet master auth.conf file needs to be changed.
