@@ -36,8 +36,8 @@ def request_to_cmdb(host: str):
 
 def main():
     log.info("Syncing Puppet & CMDB Databases")
-
-    print('\n')
+    
+    print()
     time.sleep(2)
 
     result = ""
@@ -55,9 +55,13 @@ def main():
 
         p_cmdb.status("Checking whether it is registered in CMDB")
         if "dadesInfraestructura" not in request_to_cmdb(hostname):
-            result += "{}\n".format(hostname)
+            result += "{} , ".format(hostname)
         p_result.status(result)
 
+    p_puppet.success("Done!")
+    p_cmdb.success("Done!")
+    p_result.success("{} hosts not in CMDB".format(result.count(',') + 1))
+    
 
 if __name__ == "__main__":
     main()
