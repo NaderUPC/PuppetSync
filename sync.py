@@ -37,6 +37,7 @@ def request_to_cmdb(host: str):
 def main():
     log.info("Syncing Puppet & CMDB Databases")
 
+    print('\n')
     time.sleep(2)
 
     result = ""
