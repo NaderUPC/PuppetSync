@@ -39,7 +39,7 @@ def main():
     
     print()
     time.sleep(2)
-
+    
     result = ""
     p_puppet = log.progress("Puppet")
 
