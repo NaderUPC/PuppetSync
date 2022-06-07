@@ -1,8 +1,0 @@
-puppet.upc.edu --> LOAD BALANCER --> puppet-m1.upc.edu   <--> puppet-ca.upc.edu
-                                 |                    |--|
-                                 --> puppet-m2.upc.edu   <--> isaac.upc.edu
-
-
-puppet.pre.upc.edu --> LOAD BALANCER --> puppet-m1.pre.upc.edu <--> puppet-ca.pre.upc.edu
-                                                               |
-                                                               <--> cyril.upc.edu

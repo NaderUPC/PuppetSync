@@ -1,1 +1,2 @@
-puppet/ssl/*
+config.py
+__pycache__/*
