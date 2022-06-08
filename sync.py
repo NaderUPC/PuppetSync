@@ -40,7 +40,7 @@ def main():
     print()
     time.sleep(2)
     
-    result = ""
+    not_in_cmdb = []
     p_puppet = log.progress("Puppet")
 
     p_puppet.status("Making GET request to Puppet...")
@@ -51,18 +51,17 @@ def main():
 
     for host in all_hosts:
         hostname = host['name']
-        p_puppet.status("Iterating over host '{}'".format(hostname))
+        p_puppet.status("Iterating over host '{}' [{}/{}]".format(hostname, all_hosts.index(host) + 1, len(all_hosts)))
 
-        p_cmdb.status("Checking whether it is registered in CMDB")
+        p_cmdb.status("Checking whether it is registered in CMDB...")
         if "dadesInfraestructura" not in request_to_cmdb(hostname):
-            result += "{} , ".format(hostname)
-        p_result.status(result)
+            not_in_cmdb.append(hostname)
+        p_result.status(str(len(not_in_cmdb)))
 
-    p_puppet.success("Done!")
-    p_cmdb.success("Done!")
-    p_result.success("{} hosts not in CMDB".format(result.count(',') + 1))
-    
+    p_puppet.success("[OK]")
+    p_cmdb.success("[OK]")
+    p_result.success("{} hosts not in CMDB".format(len(not_in_cmdb)))
+
 
 if __name__ == "__main__":
     main()
-
