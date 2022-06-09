@@ -9,8 +9,6 @@ import time
 
 import config
 
-from pprint import pprint
-
 
 # Ctrl+C
 def def_handler(sig, frame):
@@ -71,10 +69,15 @@ def main():
                 p_software.status("Iterating over software '{}'".format("\033[1m\033[91m" + "N/A" + "\033[0m"))
         p_not_synced.status(str(len(not_in_cmdb)))
 
-    p_puppet.success("[OK]")
-    p_cmdb.success("[OK]")
+    p_puppet.success("[DONE]")
+    p_cmdb.success("[DONE]")
     p_not_synced.success(str(len(not_in_cmdb)))
-    p_software.success("[OK]")
+    p_software.success("[DONE]")
+
+    f = open("not_in_cmdb.txt", "w")
+    for host in not_in_cmdb:
+        f.write("{}\n".format(host))
+    f.close()
 
 
 if __name__ == "__main__":
