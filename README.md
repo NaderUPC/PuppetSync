@@ -9,25 +9,19 @@ Es necesario disponer de un archivo de configuración donde se deben especificar
 
 class cmdb:
     URL = "https://bus-soa.upc.edu/gN6/Infraestructuresv1/"
-
     HEADERS = {
         "Content-Type" : "application/json",
         "login.username" :"<XXX>",
         "login.password" : "<XXX>",
         "domini" : "1123"
     }
-
     USER = "<XXX>"
-
     PASSWD = "<XXX>"
 
 class puppet:
     URL = "https://puppet.upc.edu/"
-
     HEADERS = {'Content-Type': 'application/json'}
-
     USER = "<XXX>"
-
     PASSWD = "<XXX>"
 
 ```
