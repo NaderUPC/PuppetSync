@@ -6,35 +6,102 @@ import signal
 import requests
 from requests.auth import HTTPBasicAuth
 import time
+import argparse
 
 import config
 
 
 # Ctrl+C
 def def_handler(sig, frame):
+    """
+    Catching and handling any KeyboardInterrupt ('SIGINT' code) sent by the user
+    when does Ctrl+C any time during the execution of the script.
+    """
+
     print("\n\n[!] Exiting...\n")
     sys.exit(1)
 
 signal.signal(signal.SIGINT, def_handler)
 
 
-def request_to_puppet():
-    uri = "api/hosts?per_page=all"
-    r = requests.get(config.puppet.URL + uri,
+def request_to_puppet(group=None):
+    """
+    HTTP GET request to Puppet's Foreman API to obtain the list with all registered hosts
+    (either all or specified ones based on the group parameter).
+    """
+
+    uri = "api/hosts"
+    params = {
+        "per_page": "all"
+    }
+    if group:
+        params["search"] = "parent_hostgroup={}".format(group)
+
+    r = requests.get(config.puppet.URL + uri, params=params,
                      auth=(config.puppet.USER,config.puppet.PASSWD),
                      headers=config.puppet.HEADERS)
     return r.json()['results']
 
 
 def request_to_cmdb(host: str):
+    """
+    HTTP GET request to BUS SOA API (gn6) to obtain information about the host specified
+    via parameter.
+    """
+
     r = requests.get(config.cmdb.URL + host,
                      auth=HTTPBasicAuth(config.cmdb.USER,config.cmdb.PASSWD),
                      headers=config.cmdb.HEADERS)
     return r.json()
 
 
+def get_puppet_groups():
+    """
+    HTTP GET request to Puppet's Foreman API to obtain all hostgroups with their respective
+    parent hostgroup (on order to perform a parent_hostgroup based search).
+    """
+
+    r = requests.get(config.puppet.URL + "/api/hostgroups?per_page=all",
+                     auth=(config.puppet.USER,config.puppet.PASSWD),
+                     headers=config.puppet.HEADERS).json()['results']
+    return [x['title'] for x in r]
+
+
+def group_handler(parser: argparse.ArgumentParser):
+    """
+    Handling the 'group' argument, through the -g or --group label.
+    """
+
+    parser.add_argument("-g", "--group", type=str,
+                         help="Specify the parent hostgroup in order to perform \
+                         a smaller search in the Puppet's Foreman API. If not specified, \
+                         it will request the full list of hosts without any group filtering.")
+    args = parser.parse_args()
+    p_args = log.progress("Group checker (-g / --group)")
+    if args.group:
+        if args.group in get_puppet_groups():
+            p_args.success("[DONE] Filtering by '{}'".format(args.group))
+            return args.group
+        else:
+            p_args.failure("[FAIL] No filtering will be done.")
+            return None
+    else:
+        p_args.failure("[FAIL] No filtering will be done.")
+        return None
+
+
 def main():
+    """
+    Main program flow.
+    """
+
     log.info("\033[1m\033[4m" + "Syncing Puppet & CMDB Databases" + "\033[0m")
+    
+    print()
+    time.sleep(2)
+
+    parser = argparse.ArgumentParser(description="Syncing script between Puppet & CMDB Databases")
+    group = group_handler(parser)
     
     print()
     time.sleep(2)
@@ -43,7 +110,10 @@ def main():
     p_puppet = log.progress("Puppet")
 
     p_puppet.status("Sending GET request to Puppet's Foreman API...")
-    all_hosts = request_to_puppet()
+    if group:
+        all_hosts = request_to_puppet(group=group)
+    else:
+        all_hosts = request_to_puppet()
 
     p_cmdb = log.progress("CMDB")
     p_not_synced = log.progress("Hosts not synced {Puppet <--> CMDB}")
