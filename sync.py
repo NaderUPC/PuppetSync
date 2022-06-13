@@ -24,7 +24,7 @@ def def_handler(sig, frame):
 signal.signal(signal.SIGINT, def_handler)
 
 
-def request_to_puppet(group=None):
+def request_to_puppet(group):
     """
     HTTP GET request to Puppet's Foreman API to obtain the list with all registered hosts
     (either all or specified ones based on the group parameter).
@@ -95,25 +95,25 @@ def main():
     Main program flow.
     """
 
+    # === Title === #
     log.info("\033[1m\033[4m" + "Syncing Puppet & CMDB Databases" + "\033[0m")
     
     print()
     time.sleep(2)
 
+    # === Arguments === #
     parser = argparse.ArgumentParser(description="Syncing script between Puppet & CMDB Databases")
     group = group_handler(parser)
     
     print()
     time.sleep(2)
     
+    # === Main variables === #
     not_in_cmdb = []
     p_puppet = log.progress("Puppet")
 
     p_puppet.status("Sending GET request to Puppet's Foreman API...")
-    if group:
-        all_hosts = request_to_puppet(group=group)
-    else:
-        all_hosts = request_to_puppet()
+    all_hosts = request_to_puppet(group)
 
     p_cmdb = log.progress("CMDB")
     p_not_synced = log.progress("Hosts not synced {Puppet <--> CMDB}")
@@ -121,6 +121,7 @@ def main():
     print()
     p_software = log.progress("Software")
 
+    # === Main loop === #
     for host in all_hosts:
         hostname = host['name']
         p_puppet.status("Iterating over host [{}/{}] '{}'".format(all_hosts.index(host) + 1, len(all_hosts), hostname))
@@ -144,10 +145,14 @@ def main():
     p_not_synced.success(str(len(not_in_cmdb)))
     p_software.success("[DONE]")
 
-    f = open("not_in_cmdb.txt", "w")
-    for host in not_in_cmdb:
-        f.write("{}\n".format(host))
-    f.close()
+    # === Writing final list to file === #
+    if group:
+        filename = "not_in_cmdb_{}.txt".format(group).replace('/', '-')
+    else:
+        filename = "not_in_cmdb_ALL.txt"
+    with open(filename, "w") as f:
+        for host in not_in_cmdb:
+            f.write("{}\n".format(host))
 
 
 if __name__ == "__main__":
