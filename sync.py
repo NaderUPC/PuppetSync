@@ -142,7 +142,7 @@ def main():
 
     p_puppet.success("[DONE]")
     p_cmdb.success("[DONE]")
-    p_not_synced.success(str(len(not_in_cmdb)))
+    p_not_synced.success("{}/{}".format(len(not_in_cmdb), len(all_hosts)))
     p_software.success("[DONE]")
 
     # === Writing final list to file === #
