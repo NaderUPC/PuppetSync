@@ -49,7 +49,9 @@ def request_to_cmdb(host: str):
     via parameter.
     """
 
-    r = requests.get(config.cmdb.URL + host,
+    uri = "gN6/Infraestructuresv1/"
+
+    r = requests.get(config.cmdb.URL + uri + host,
                      auth=HTTPBasicAuth(config.cmdb.USER,config.cmdb.PASSWD),
                      headers=config.cmdb.HEADERS)
     return r.json()
@@ -150,9 +152,13 @@ def main():
         filename = "not_in_cmdb_{}.txt".format(group).replace('/', '-')
     else:
         filename = "not_in_cmdb_ALL.txt"
-    with open(filename, "w") as f:
-        for host in not_in_cmdb:
-            f.write("{}\n".format(host))
+    if not not_in_cmdb:
+        sys.exit(0)
+    else:
+        with open(filename, "w") as f:
+            for host in not_in_cmdb:
+                f.write("{}\n".format(host))
+        sys.exit(2)
 
 
 if __name__ == "__main__":

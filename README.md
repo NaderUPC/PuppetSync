@@ -8,7 +8,7 @@ Es necesario disponer de un archivo de configuración donde se deben especificar
 ```python
 
 class cmdb:
-    URL = "https://bus-soa.upc.edu/gN6/Infraestructuresv1/"
+    URL = "https://bus-soades.upc.edu/"
     HEADERS = {
         "Content-Type" : "application/json",
         "login.username" :"<XXX>",
@@ -19,7 +19,7 @@ class cmdb:
     PASSWD = "<XXX>"
 
 class puppet:
-    URL = "https://puppet.upc.edu/"
+    URL = "https://puppet.pre.upc.edu/"
     HEADERS = {'Content-Type': 'application/json'}
     USER = "<XXX>"
     PASSWD = "<XXX>"
