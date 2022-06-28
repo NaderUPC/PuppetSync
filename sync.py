@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-from pwn import *
 import sys
 import signal
 import requests
-from requests.auth import HTTPBasicAuth
 import time
 import argparse
+from requests.auth import HTTPBasicAuth
+from http.client import responses
+from pwn import *
 
 import config
 
@@ -40,7 +41,10 @@ def request_to_puppet(group):
     r = requests.get(config.puppet.URL + uri, params=params,
                      auth=(config.puppet.USER,config.puppet.PASSWD),
                      headers=config.puppet.HEADERS)
-    return r.json()['results']
+    try:
+        return r.json()['results']
+    except requests.exceptions.JSONDecodeError:
+        return r.status_code
 
 
 def request_to_cmdb(host: str):
@@ -54,7 +58,10 @@ def request_to_cmdb(host: str):
     r = requests.get(config.cmdb.URL + uri + host,
                      auth=HTTPBasicAuth(config.cmdb.USER,config.cmdb.PASSWD),
                      headers=config.cmdb.HEADERS)
-    return r.json()
+    try:
+        return r.json()
+    except requests.exceptions.JSONDecodeError:
+        return r.status_code
 
 
 def get_puppet_groups():
@@ -116,6 +123,9 @@ def main():
 
     p_puppet.status("Sending GET request to Puppet's Foreman API...")
     all_hosts = request_to_puppet(group)
+    if isinstance(all_hosts, int):
+        p_puppet.failure("[FAIL] {}: {}".format(all_hosts, responses[all_hosts]))
+        sys.exit(all_hosts)
 
     p_cmdb = log.progress("CMDB")
     p_not_synced = log.progress("Hosts not synced {Puppet <--> CMDB}")
@@ -129,7 +139,14 @@ def main():
         p_puppet.status("Iterating over host [{}/{}] '{}'".format(all_hosts.index(host) + 1, len(all_hosts), hostname))
 
         p_cmdb.status("Checking whether it is registered in CMDB...")
-        if "dadesInfraestructura" not in request_to_cmdb(hostname):
+        cmdb_host = request_to_cmdb(hostname)
+        if isinstance(cmdb_host, int):
+            p_cmdb.failure("[FAIL] {}: {}".format(cmdb_host, responses[cmdb_host]))
+            p_puppet.failure("[NOT COMPLETED]")
+            p_not_synced.failure("[NOT COMPLETED]")
+            p_software.failure("[NOT COMPLETED]")
+            sys.exit(cmdb_host)
+        if "dadesInfraestructura" not in cmdb_host:
             not_in_cmdb.append(hostname)
         else:
             try:
