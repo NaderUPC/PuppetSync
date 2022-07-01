@@ -16,7 +16,7 @@ import config
 def def_handler(sig, frame):
     """
     Catching and handling any KeyboardInterrupt ('SIGINT' code) sent by the user
-    when does Ctrl+C any time during the execution of the script.
+    when a Ctrl+C is performed at any time during the execution of the script.
     """
 
     print("\n\n[!] Exiting...\n")
