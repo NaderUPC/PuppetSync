@@ -11,6 +11,8 @@ from pwn import *
 
 import config
 
+from pprint import pprint
+
 
 # Ctrl+C
 def def_handler(sig, frame):
@@ -82,9 +84,9 @@ def group_handler(parser: argparse.ArgumentParser):
     """
 
     parser.add_argument("-g", "--group", type=str,
-                         help="Specify the parent hostgroup in order to perform \
-                         a smaller search in the Puppet's Foreman API. If not specified, \
-                         it will request the full list of hosts without any group filtering.")
+                        help="Specify the parent hostgroup in order to perform \
+                        a smaller search in the Puppet's Foreman API. If not specified, \
+                        it will request the full list of hosts without any group filtering.")
     args = parser.parse_args()
     p_args = log.progress("Group checker (-g / --group)")
     if args.group:
@@ -151,12 +153,24 @@ def main():
         else:
             try:
                 sw_list = request_to_cmdb(hostname + "/software")['llistaRelacions']
-                for software in sw_list:
-                    software_name = software['toBrandName']
-                    p_software.status("Iterating over software '{}'".format("\033[1m\033[92m" + software_name + "\033[0m"))
-                    # (...)
-            except:
-                p_software.status("Iterating over software '{}'".format("\033[1m\033[91m" + "N/A" + "\033[0m"))
+            except KeyError:
+                sw_list = []
+            if not sw_list:
+                print(hostname)
+            for software in sw_list:
+                software_name = software['toProductName']
+                p_software.status("Iterating over software '{}'".format("\033[1m\033[92m" + software_name + "\033[0m"))
+                
+                if software['sistemaOperatiu'] == 'Y':
+                    is_the_same_OS = software_name.lower().replace(' ', '') in host['operatingsystem_name'].lower().replace(' ', '') \
+                                     or host['operatingsystem_name'].lower().replace(' ', '') in software_name.lower().replace(' ', '')
+                    if not is_the_same_OS:
+                        print("D:")
+                        # (...) OS: Puppet vs CMDB === Puppet (winner)
+                    else:
+                        print(":D")  # All good!
+                # (...)
+            
         p_not_synced.status(str(len(not_in_cmdb)))
 
     p_puppet.success("[DONE]")
