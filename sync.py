@@ -120,7 +120,7 @@ def main():
     time.sleep(2)
     
     # === Main variables === #
-    not_in_cmdb = []
+    not_synced = []
     p_puppet = log.progress("Puppet")
 
     p_puppet.status("Sending GET request to Puppet's Foreman API...")
@@ -149,14 +149,18 @@ def main():
             p_software.failure("[NOT COMPLETED]")
             sys.exit(cmdb_host)
         if "dadesInfraestructura" not in cmdb_host:
-            not_in_cmdb.append(hostname)
+            not_synced.append(hostname)
         else:
             try:
                 sw_list = request_to_cmdb(hostname + "/software")['llistaRelacions']
             except KeyError:
                 sw_list = []
+                not_synced.append(hostname)
             if not sw_list:
+                # (...) Add software (first, OS) to CMDB from Puppet
+                print(host['operatingsystem_name'].replace(' LTS', ''), end=' --> ')
                 print(hostname)
+                pass
             for software in sw_list:
                 software_name = software['toProductName']
                 p_software.status("Iterating over software '{}'".format("\033[1m\033[92m" + software_name + "\033[0m"))
@@ -167,15 +171,14 @@ def main():
                     if not is_the_same_OS:
                         print("D:")
                         # (...) OS: Puppet vs CMDB === Puppet (winner)
-                    else:
-                        print(":D")  # All good!
+                
                 # (...)
             
-        p_not_synced.status(str(len(not_in_cmdb)))
+        p_not_synced.status(str(len(not_synced)))
 
     p_puppet.success("[DONE]")
     p_cmdb.success("[DONE]")
-    p_not_synced.success("{}/{}".format(len(not_in_cmdb), len(all_hosts)))
+    p_not_synced.success("{}/{}".format(len(not_synced), len(all_hosts)))
     p_software.success("[DONE]")
 
     # === Writing final list to file === #
@@ -183,11 +186,11 @@ def main():
         filename = "not_in_cmdb_{}.txt".format(group).replace('/', '-')
     else:
         filename = "not_in_cmdb_ALL.txt"
-    if not not_in_cmdb:
+    if not not_synced:
         sys.exit(0)
     else:
         with open(filename, "w") as f:
-            for host in not_in_cmdb:
+            for host in not_synced:
                 f.write("{}\n".format(host))
         sys.exit(2)
 
