@@ -1,4 +1,5 @@
 import requests
+from http.client import responses
 
 
 class API:
@@ -8,7 +9,7 @@ class API:
     
     def __init__(self, url: str, username: str, password: str) -> None:
         """
-        (...)
+        Class initialization method.
         """
         
         self.url = url
@@ -29,7 +30,8 @@ class API:
             url = self.url + uri,
             auth = (self.username, self.password),
             data = data,
-            params = params
+            params = params,
+            headers = self.headers
         )
     
     
@@ -63,3 +65,16 @@ class API:
         """
         
         return self.__request__("DELETE", uri, params = params, data = data)
+    
+    
+    class NotAvailableError(Exception):
+        """
+        (...)
+        """
+        
+        def __init__(self, status_code: int) -> None:
+            """
+            Class initialization method.
+            """
+            
+            super().__init__("{}: {}".format(status_code, responses[status_code]))
