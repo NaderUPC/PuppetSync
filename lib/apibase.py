@@ -4,7 +4,13 @@ from http.client import responses
 
 class API:
     """
-    (...)
+    Base API Library
+    ~~~~~~~~~~~~~~~~
+    
+    Base implementation of an API, to be used by more specific API wrappers.
+    
+    Args:
+        url: Base URL of the API
     """
     
     def __init__(self, url: str, username: str, password: str) -> None:
