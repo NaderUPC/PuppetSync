@@ -43,7 +43,7 @@ class Puppet(API):
         r = self.get("api/hosts", params = params)
         try:
             return r.json()["results"]
-        except simplejson.JSONDecodeError:
+        except (simplejson.JSONDecodeError, KeyError):
             raise API.NotAvailableError(r.status_code) from None
     
     
@@ -56,7 +56,7 @@ class Puppet(API):
         r = self.get("api/hostgroups", params = params)
         try:
             r = r.json()["results"]
-        except simplejson.JSONDecodeError:
+        except (simplejson.JSONDecodeError, KeyError):
             raise API.NotAvailableError(r.status_code) from None
         return [x["title"] for x in r]
     
@@ -71,5 +71,5 @@ class Puppet(API):
         r = self.get("api/hosts/" + hostname + "/facts", params = params)
         try:
             return r.json()["results"][hostname]
-        except simplejson.JSONDecodeError:
+        except (simplejson.JSONDecodeError, KeyError):
             raise API.NotAvailableError(r.status_code) from None
