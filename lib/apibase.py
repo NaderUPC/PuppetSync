@@ -39,15 +39,17 @@ class API:
         """
         Request base method to be used further on (private).
         """
-        
-        return requests.request(
-            method = method,
-            url = self.url + uri,
-            auth = (self.username, self.password),
-            data = data,
-            params = params,
-            headers = self.headers
-        )
+        try:
+            return requests.request(
+                method = method,
+                url = self.url + uri,
+                auth = (self.username, self.password),
+                data = data,
+                params = params,
+                headers = self.headers
+            )
+        except requests.exceptions.ConnectionError:
+            raise API.NotAvailableError(404) from None
     
     
     def get(self, uri: str, params: dict = None) -> requests.Response:
