@@ -6,7 +6,6 @@ Es necesario disponer de un archivo de configuración donde se deben especificar
 
 `config.yaml`
 ```yaml
-
 puppet:
     url: https://puppet.pre.upc.edu/
     username: <XXX>
@@ -18,5 +17,4 @@ cmdb:
     password: <XXX>
     soa_username: <XXX>
     soa_password: <XXX>
-
 ```
