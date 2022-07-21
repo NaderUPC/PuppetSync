@@ -6,10 +6,10 @@ Library made to act as a wrapper for the Puppet API.
 """
 
 import requests
-import apibase
+from lib.apibase import API
 
 
-class Puppet(apibase.API):
+class Puppet(API):
     """
     Puppet API Library
     ~~~~~~~~~~~~~~~~~~
@@ -44,7 +44,7 @@ class Puppet(apibase.API):
         try:
             return r.json()["results"]
         except requests.exceptions.JSONDecodeError:
-            raise apibase.API.NotAvailableError(r.status_code)
+            raise API.NotAvailableError(r.status_code)
     
     
     def groups(self) -> list | None:
@@ -57,7 +57,7 @@ class Puppet(apibase.API):
         try:
             r = r.json()["results"]
         except requests.exceptions.JSONDecodeError:
-            raise apibase.API.NotAvailableError(r.status_code)
+            raise API.NotAvailableError(r.status_code)
         return [x["title"] for x in r]
     
     
@@ -72,4 +72,4 @@ class Puppet(apibase.API):
         try:
             return r.json()["results"][hostname]
         except requests.exceptions.JSONDecodeError:
-            raise apibase.API.NotAvailableError(r.status_code)
+            raise API.NotAvailableError(r.status_code)

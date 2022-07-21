@@ -6,10 +6,10 @@ Library made to act as a wrapper for the CMDB API (gN6).
 """
 
 import requests
-import apibase
+from lib.apibase import API
 
 
-class CMDB(apibase.API):
+class CMDB(API):
     """
     CMDB (gN6) API Library
     ~~~~~~~~~~~~~~~~~~
@@ -45,7 +45,7 @@ class CMDB(apibase.API):
         try:
             return r.json()
         except requests.exceptions.JSONDecodeError:
-            raise apibase.API.NotAvailableError(r.status_code)
+            raise API.NotAvailableError(r.status_code)
     
     
     def software_of(self, hostname: str) -> list | None:
@@ -58,6 +58,6 @@ class CMDB(apibase.API):
         try:
             r = r.json()["llistaRelacions"]
         except requests.exceptions.JSONDecodeError:
-            raise apibase.API.NotAvailableError(r.status_code)
+            raise API.NotAvailableError(r.status_code)
         except KeyError:
             return []
