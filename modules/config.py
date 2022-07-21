@@ -1,7 +1,8 @@
 import yaml
 
 
-config = yaml.safe_load(open("config.yaml"))
+config = yaml.safe_load(open("../config.yaml"))
+
 
 class puppet:
     url = config["puppet"]["url"]

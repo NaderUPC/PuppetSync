@@ -1,30 +1,47 @@
 #!/usr/bin/env python3
 
-from lib.puppet import Puppet
-from lib.cmdb import CMDB
-import config
+import lib.puppet as puppet
+import lib.cmdb as cmdb
+import modules.config as config
+import modules.args as args
 import sys
 
+# Temporal import (for testing purposes)
 from pprint import pprint
 
 
 # Ctrl+C
 def def_handler(sig, frame):
+    """
+    Catching and handling any KeyboardInterrupt ('SIGINT' code) sent by the user
+    when a Ctrl+C is performed at any time during the execution of the script.
+    """
+    
     print("\n\n[!] Exiting...\n")
     sys.exit(1)
 
 
 def main():
-    puppet = Puppet(config.puppet.url,
+    """
+    Main program flow.
+    """
+    
+    # === API Endpoints instantiation === #
+    puppet_ep = puppet.Puppet(config.puppet.url,
                     config.puppet.username,
                     config.puppet.password)
-    cmdb = CMDB(config.cmdb.url,
+    cmdb_ep = cmdb.CMDB(config.cmdb.url,
                 config.cmdb.username,
                 config.cmdb.password,
                 config.cmdb.soa_username,
                 config.cmdb.soa_password)
-    print(puppet)
-    print(cmdb)
+    
+    # === Arguments === #
+    group = args.group_handler(puppet_ep)
+    
+    # === Main loop === #
+    for host in puppet_ep.hosts(group):
+        pass
 
 
 if __name__ == "__main__":
