@@ -1,10 +1,27 @@
+"""
+CMDB (gN6) API Library
+~~~~~~~~~~~~~~~~~~
+
+Library made to act as a wrapper for the CMDB API (gN6).
+"""
+
 import requests
 import apibase
 
 
 class CMDB(apibase.API):
     """
-    (...)
+    CMDB (gN6) API Library
+    ~~~~~~~~~~~~~~~~~~
+
+    Library made to act as a wrapper for the CMDB API (gN6).
+    
+    Args:
+        url: Base URL of the CMDB (gN6) API.
+        username: Username to use for Authentication against the CMDB (gN6) API.
+        password: Password to use for Authentication against the CMDB (gN6) API.
+        soa_username: Username to use for Authenticaion against the Bus SOA.
+        soa_password: Password to use for Authenticaion against the Bus SOA.
     """
     
     def __init__(self, url: str, username: str, password: str, soa_username: str, soa_password: str) -> None:
@@ -20,7 +37,8 @@ class CMDB(apibase.API):
     
     def info_of(self, hostname: str) -> dict | None:
         """
-        (...)
+        Given a specific hostname, gets and returns a JSON object (dict)
+        with all information and properties about that host.
         """
         
         r = self.get("gN6/Infraestructuresv1/" + hostname)
@@ -32,7 +50,8 @@ class CMDB(apibase.API):
     
     def software_of(self, hostname: str) -> list | None:
         """
-        (...)
+        Given a specific hostname, gets and returns a list of all software
+        associated to that host within CMDB.
         """
         
         r = self.get("gN6/Infraestructuresv1/" + hostname + "/software")
