@@ -17,7 +17,7 @@ class Puppet(apibase.API):
     Library made to act as a wrapper for the Puppet API.
     
     Args:
-        url: Base URL of the Puppet API
+        url: Base URL of the Puppet API.
         username: Username to use for Authentication against the Puppet API.
         password: Password to use for Authentication against the Puppet API.
     """
