@@ -5,7 +5,7 @@ CMDB (gN6) API Library
 Library made to act as a wrapper for the CMDB API (gN6).
 """
 
-import requests
+import simplejson
 from lib.apibase import API
 
 
@@ -44,8 +44,8 @@ class CMDB(API):
         r = self.get("gN6/Infraestructuresv1/" + hostname)
         try:
             return r.json()
-        except requests.exceptions.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code)
+        except simplejson.JSONDecodeError:
+            raise API.NotAvailableError(r.status_code) from None
     
     
     def software_of(self, hostname: str) -> list | None:
@@ -57,7 +57,7 @@ class CMDB(API):
         r = self.get("gN6/Infraestructuresv1/" + hostname + "/software")
         try:
             r = r.json()["llistaRelacions"]
-        except requests.exceptions.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code)
+        except simplejson.JSONDecodeError:
+            raise API.NotAvailableError(r.status_code) from None
         except KeyError:
             return []

@@ -40,8 +40,12 @@ def main():
     group = args.group_handler(puppet_ep)
     
     # === Main loop === #
+    not_synced = []
     for host in puppet_ep.hosts(group):
-        pass
+        if "dadesInfraestructura" not in cmdb_ep.info_of(host["name"]):
+            not_synced.append(host["name"])
+            
+    pprint(not_synced)
 
 
 if __name__ == "__main__":

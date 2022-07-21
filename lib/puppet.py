@@ -5,7 +5,7 @@ Puppet API Library
 Library made to act as a wrapper for the Puppet API.
 """
 
-import requests
+import simplejson
 from lib.apibase import API
 
 
@@ -43,8 +43,8 @@ class Puppet(API):
         r = self.get("api/hosts", params = params)
         try:
             return r.json()["results"]
-        except requests.exceptions.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code)
+        except simplejson.JSONDecodeError:
+            raise API.NotAvailableError(r.status_code) from None
     
     
     def groups(self) -> list | None:
@@ -56,8 +56,8 @@ class Puppet(API):
         r = self.get("api/hostgroups", params = params)
         try:
             r = r.json()["results"]
-        except requests.exceptions.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code)
+        except simplejson.JSONDecodeError:
+            raise API.NotAvailableError(r.status_code) from None
         return [x["title"] for x in r]
     
     
@@ -71,5 +71,5 @@ class Puppet(API):
         r = self.get("api/hosts/" + hostname + "/facts", params = params)
         try:
             return r.json()["results"][hostname]
-        except requests.exceptions.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code)
+        except simplejson.JSONDecodeError:
+            raise API.NotAvailableError(r.status_code) from None
