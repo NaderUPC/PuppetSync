@@ -8,6 +8,7 @@ import sys
 
 # Temporal import (for testing purposes)
 from pprint import pprint
+import signal
 
 
 # Ctrl+C
@@ -19,6 +20,8 @@ def def_handler(sig, frame):
     
     print("\n\n[!] Exiting...\n")
     sys.exit(1)
+    
+signal.signal(signal.SIGINT, def_handler)
 
 
 def main():
@@ -28,13 +31,13 @@ def main():
     
     # === API Endpoints instantiation === #
     puppet_ep = puppet.Puppet(config.puppet.url,
-                    config.puppet.username,
-                    config.puppet.password)
+                              config.puppet.username,
+                              config.puppet.password)
     cmdb_ep = cmdb.CMDB(config.cmdb.url,
-                config.cmdb.username,
-                config.cmdb.password,
-                config.cmdb.soa_username,
-                config.cmdb.soa_password)
+                        config.cmdb.username,
+                        config.cmdb.password,
+                        config.cmdb.soa_username,
+                        config.cmdb.soa_password)
     
     # === Arguments === #
     group = args.group_handler(puppet_ep)
@@ -44,8 +47,8 @@ def main():
     for host in puppet_ep.hosts(group):
         if "dadesInfraestructura" not in cmdb_ep.info_of(host["name"]):
             not_synced.append(host["name"])
-            
-    pprint(not_synced)
+        else:
+            pass
 
 
 if __name__ == "__main__":
