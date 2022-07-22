@@ -56,7 +56,7 @@ class CMDB(API):
         
         r = self.get("gN6/Infraestructuresv1/" + hostname + "/software")
         try:
-            r = r.json()["llistaRelacions"]
+            return r.json()["llistaRelacions"]
         except simplejson.JSONDecodeError:
             raise API.NotAvailableError(r.status_code) from None
         except KeyError:

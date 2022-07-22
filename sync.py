@@ -43,12 +43,17 @@ def main():
     group = args.group_handler(puppet_ep)
     
     # === Main loop === #
-    not_synced = []
+    print("HOST: PUPPET OS <-> CMDB OS")
+    print("--------------------------------")
     for host in puppet_ep.hosts(group):
-        if "dadesInfraestructura" not in cmdb_ep.info_of(host["name"]):
-            not_synced.append(host["name"])
-        else:
-            pass
+        if "dadesInfraestructura" in cmdb_ep.info_of(host["name"]):
+            sw_list = cmdb_ep.software_of(host["name"])
+            if not sw_list:
+                print(host["name"] + ": " + puppet_ep.os(host["name"]) + " <-> " + "None")
+            else:
+                for sw in sw_list:
+                    if sw["sistemaOperatiu"] == 'Y':
+                        print(host["name"] + ": " + puppet_ep.os(host["name"]) + " <-> " + sw["toProductName"])
 
 
 if __name__ == "__main__":

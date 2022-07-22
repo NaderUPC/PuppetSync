@@ -73,3 +73,13 @@ class Puppet(API):
             return r.json()["results"][hostname]
         except (simplejson.JSONDecodeError, KeyError):
             raise API.NotAvailableError(r.status_code) from None
+    
+    
+    def os(self, hostname: str) -> str:
+        """
+        Given a specific hostname, returns its OS name and version.
+        """
+        
+        facts = self.facts_of(hostname)
+        return "{} {}".format(facts["operatingsystem"],
+                              facts["operatingsystemrelease"])
