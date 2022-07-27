@@ -4,24 +4,17 @@ Refactor and improvement of the puppet-gn6 sync tool in Python currently in prod
 
 Es necesario disponer de un archivo de configuración donde se deben especificar las siguientes constantes:
 
-`config.py`
-```python
+`config.yaml`
+```yaml
+puppet:
+    url: https://puppet.pre.upc.edu/
+    username: <XXX>
+    password: <XXX>
 
-class cmdb:
-    URL = "https://bus-soades.upc.edu/"
-    HEADERS = {
-        "Content-Type" : "application/json",
-        "login.username" :"<XXX>",
-        "login.password" : "<XXX>",
-        "domini" : "1123"
-    }
-    USER = "<XXX>"
-    PASSWD = "<XXX>"
-
-class puppet:
-    URL = "https://puppet.pre.upc.edu/"
-    HEADERS = {'Content-Type': 'application/json'}
-    USER = "<XXX>"
-    PASSWD = "<XXX>"
-
+cmdb:
+    url: https://bus-soades.upc.edu/
+    username: <XXX>
+    password: <XXX>
+    soa_username: <XXX>
+    soa_password: <XXX>
 ```
