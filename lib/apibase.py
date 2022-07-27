@@ -6,6 +6,7 @@ Base implementation of an API, to be used by more specific API wrappers.
 """
 
 import requests
+import json
 from http.client import responses
 
 
@@ -49,7 +50,7 @@ class API:
                 headers = self.headers
             )
         except requests.exceptions.ConnectionError:
-            raise API.NotAvailableError(404) from None
+            raise self.NotAvailableError(404) from None
     
     
     def get(self, uri: str, params: dict = None) -> requests.Response:
@@ -65,7 +66,7 @@ class API:
         POST HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("POST", uri, params = params, data = data)
+        return self.__request__("POST", uri, params = params, data = json.dumps(data))
     
     
     def put(self, uri: str, data: dict, params: dict = None) -> requests.Response:
@@ -73,7 +74,7 @@ class API:
         PUT HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("PUT", uri, params = params, data = data)
+        return self.__request__("PUT", uri, params = params, data = json.dumps(data))
     
     
     def delete(self, uri: str, data: dict, params: dict = None) -> requests.Response:
@@ -81,7 +82,7 @@ class API:
         DELETE HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("DELETE", uri, params = params, data = data)
+        return self.__request__("DELETE", uri, params = params, data = json.dumps(data))
     
     
     class NotAvailableError(Exception):
@@ -94,4 +95,4 @@ class API:
             Class initialization method.
             """
             
-            super().__init__("{}: {}".format(status_code, responses[status_code]))
+            super().__init__(f"{status_code}: {responses[status_code]}")

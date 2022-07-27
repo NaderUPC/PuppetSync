@@ -6,10 +6,10 @@ Library made to act as a wrapper for the Puppet API.
 """
 
 import simplejson
-from lib.apibase import API
+import lib.apibase as apibase
 
 
-class Puppet(API):
+class Puppet(apibase.API):
     """
     Puppet API Library
     ~~~~~~~~~~~~~~~~~~
@@ -30,7 +30,7 @@ class Puppet(API):
         super().__init__(url, username, password)
     
     
-    def hosts(self, group: str = None) -> list | None:
+    def hosts(self, group: str = None) -> list:
         """
         Get list of all hosts registered within Puppet. A specific group
         can be provided, to only return the hosts the belong to it.
@@ -38,16 +38,16 @@ class Puppet(API):
         
         params = { "per_page": "all" }
         if group:
-            params["search"] = "parent_hostgroup={}".format(group)
+            params["search"] = f"parent_hostgroup={group}"
             
         r = self.get("api/hosts", params = params)
         try:
             return r.json()["results"]
         except (simplejson.JSONDecodeError, KeyError):
-            raise API.NotAvailableError(r.status_code) from None
+            raise self.NotAvailableError(r.status_code) from None
     
     
-    def groups(self) -> list | None:
+    def groups(self) -> list:
         """
         Get list of groups registered within Puppet.
         """
@@ -57,22 +57,22 @@ class Puppet(API):
         try:
             r = r.json()["results"]
         except (simplejson.JSONDecodeError, KeyError):
-            raise API.NotAvailableError(r.status_code) from None
+            raise self.NotAvailableError(r.status_code) from None
         return [x["title"] for x in r]
     
     
-    def facts_of(self, hostname: str) -> dict | None:
+    def facts_of(self, hostname: str) -> dict:
         """
         Given a specific hostname, gets and returns a JSON object (dict)
         with all Puppet facts associated to that host.
         """
         
         params = { "per_page": "1000" }
-        r = self.get("api/hosts/" + hostname + "/facts", params = params)
+        r = self.get(f"api/hosts/{hostname}/facts", params = params)
         try:
             return r.json()["results"][hostname]
         except (simplejson.JSONDecodeError, KeyError):
-            raise API.NotAvailableError(r.status_code) from None
+            raise self.NotAvailableError(r.status_code) from None
     
     
     def os(self, hostname: str) -> str:
@@ -81,5 +81,4 @@ class Puppet(API):
         """
         
         facts = self.facts_of(hostname)
-        return "{} {}".format(facts["operatingsystem"],
-                              facts["operatingsystemrelease"])
+        return f"{facts['operatingsystem']} {facts['operatingsystemrelease']}"

@@ -6,10 +6,10 @@ Library made to act as a wrapper for the CMDB API (gN6).
 """
 
 import simplejson
-from lib.apibase import API
+import lib.apibase as apibase
 
 
-class CMDB(API):
+class CMDB(apibase.API):
     """
     CMDB (gN6) API Library
     ~~~~~~~~~~~~~~~~~~
@@ -35,29 +35,62 @@ class CMDB(API):
         self.headers["login.password"] = soa_password
     
     
-    def info_of(self, hostname: str) -> dict | None:
+    def info_of(self, hostname: str) -> dict:
         """
         Given a specific hostname, gets and returns a JSON object (dict)
         with all information and properties about that host.
         """
         
-        r = self.get("gN6/Infraestructuresv1/" + hostname)
+        r = self.get(f"gN6/Infraestructuresv1/{hostname}")
         try:
             return r.json()
         except simplejson.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code) from None
+            raise self.NotAvailableError(r.status_code) from None
     
     
-    def software_of(self, hostname: str) -> list | None:
+    def software_of(self, hostname: str) -> list:
         """
         Given a specific hostname, gets and returns a list of all software
         associated to that host within CMDB.
         """
         
-        r = self.get("gN6/Infraestructuresv1/" + hostname + "/software")
+        r = self.get(f"gN6/Infraestructuresv1/{hostname}/software")
         try:
             return r.json()["llistaRelacions"]
         except simplejson.JSONDecodeError:
-            raise API.NotAvailableError(r.status_code) from None
+            raise self.NotAvailableError(r.status_code) from None
         except KeyError:
             return []
+    
+    
+    def link_host_sw(self, hostname: str, software: str) -> None:
+        """
+        Given a hostname and a software name, links both in a relationship.
+        """        
+        
+        data = {
+            "idInfra": hostname,
+            "nomSoftware": software
+        }
+        r = self.post(f"gN6/Infraestructuresv1/{hostname}/software/{software}", data)
+        try:
+            if r.json()["resultat"] == "SUCCESS":
+                return
+            else:
+                raise self.RequestError(r.json()["codiError"], r.json()["resultatMissatge"]) from None
+        except simplejson.JSONDecodeError:
+            raise self.NotAvailableError(r.status_code) from None
+    
+    
+    class RequestError(Exception):
+        """
+        Exception made to be raised when a request to the CMDB's API that carries data
+        (POST, PUT, DELETE) fails and returns an error.
+        """
+        
+        def __init__(self, error_code: str, error_msg: str) -> None:
+            """
+            Class initialization method.
+            """
+            
+            super().__init__(f"{error_code}: {error_msg}")
