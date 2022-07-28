@@ -14,11 +14,7 @@ from pprint import pprint
 funcs.ctrl_c()
 
 
-# === Lambda/Arrow function definitions === #
-is_in_cmdb = lambda cmdb_ep, host: "dadesInfraestructura" in cmdb_ep.info_of(host["name"])
-is_os = lambda software: software["sistemaOperatiu"] == 'Y'
-
-
+# === MAIN === #
 def main():
     """
     Main program flow.
@@ -35,31 +31,32 @@ def main():
                         config.cmdb.soa_password)
     
     # === Arguments === #
-    group = args.group_handler(puppet_ep)
+    args.init_args(puppet_ep)
     
     # === Main loop === #
-    for host in puppet_ep.hosts(group):
-        if is_in_cmdb(cmdb_ep, host):
+    for host in puppet_ep.hosts(args.group()):
+        if funcs.is_in_cmdb(cmdb_ep, host):
             sw_list = cmdb_ep.software_of(host["name"])
             # Has software in CMDB
-            if sw_list:
-                for sw in sw_list:
-                    # Operating system
-                    if is_os(sw):
-                        print(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
-                        input("Enter to continue...")
-                        funcs.sync_os(puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
-                    # Rest of software
-                    else:
-                        funcs.sync_sw()
+            for sw in sw_list:
+                # Operating system
+                if funcs.is_os(sw):
+                    print(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
+                    input("Enter to continue...")
+                    funcs.sync_os(puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
+                # Rest of software
+                else:
+                    print(sw["toProductName"])
+                    input()
+                    ####funcs.sync_sw()
             # No software in CMDB
-            else:
+            if not sw_list:
                 # Operating system
                 print(f"Adding OS ({puppet_ep.os(host['name'])}) to '{host['name']}'")
                 input("Enter to continue...")
-                funcs.add_os()
+                funcs.sync_os(puppet_ep, cmdb_ep, host["name"])
                 # Rest of software
-                funcs.add_sw()
+                ####funcs.sync_sw()
 
 
 if __name__ == "__main__":
