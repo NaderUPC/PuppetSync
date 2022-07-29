@@ -15,6 +15,10 @@ import modules.args as args
 
 
 def init() -> logging.Logger:
+    """
+    Logger initialization.
+    """
+    
     logger = logging.getLogger("PuppetSync Logger")
     handler = logging.handlers.SysLogHandler(address = "/dev/log")
     
