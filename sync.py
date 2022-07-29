@@ -12,6 +12,11 @@ import modules.logging as logging
 funcs.ctrl_c()
 
 
+# === Main loop's function === #
+def sync(log: logging.logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB):
+    pass
+
+
 # === MAIN === #
 def main():
     """
