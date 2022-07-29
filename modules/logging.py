@@ -25,7 +25,7 @@ def init() -> logging.Logger:
         logger.setLevel(logging.INFO)
         handler.setLevel(logging.INFO)
         
-    format = logging.Formatter("%(asctime)s %(levelname)s [%(thread)d] [%(funcName)s:%(lineno)d] %(message)s")
+    format = logging.Formatter("%(asctime)s %(levelname)s [%(thread)d] [%(module)s:%(funcName)s:%(lineno)d] %(message)s")
     handler.setFormatter(format)
     logger.addHandler(handler)
     

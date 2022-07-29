@@ -18,3 +18,10 @@ cmdb:
     soa_username: <XXX>
     soa_password: <XXX>
 ```
+
+### Logging Levels Information:
+- **DEBUG** -> Very verbose messages: *for debugging purposes*
+- **INFO** -> Normal messages
+- **WARNING** -> Host without software in CMDB
+- **ERROR** -> RequestError(error_code, error_msg): *CMDB Requests*
+- **CRITICAL** -> NotAvailableError(status_code): *HTTP Requests*

@@ -7,9 +7,6 @@ import modules.args as args
 import modules.funcs as funcs
 import modules.logging as logging
 
-# Temporal import (for testing purposes)
-from pprint import pprint
-
 
 # === Ctrl+C === #    
 funcs.ctrl_c()
@@ -38,15 +35,15 @@ def main():
     log = logging.init()
     
     # === Main loop === #
-    for host in puppet_ep.hosts(args.group()):
-        if funcs.is_in_cmdb(cmdb_ep, host):
-            sw_list = cmdb_ep.software_of(host["name"])
+    for host in puppet_ep.hosts(log, args.group()):
+        if funcs.is_in_cmdb(log, cmdb_ep, host):
+            sw_list = cmdb_ep.software_of(log, host["name"])
             # Has software in CMDB
             for sw in sw_list:
                 # Operating system
                 if funcs.is_os(sw):
-                    log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
-                    funcs.sync_os(puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
+                    log.info(f"Syncing OS between Puppet ({puppet_ep.os(log, host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
+                    funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
                 # Rest of software
                 else:
                     pass
@@ -54,7 +51,7 @@ def main():
             if not sw_list:
                 # Operating system
                 log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB (None) for '{host['name']}'")
-                funcs.sync_os(puppet_ep, cmdb_ep, host["name"])
+                funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"])
                 # Rest of software
                 pass
 

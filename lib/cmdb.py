@@ -7,6 +7,8 @@ Library made to act as a wrapper for the CMDB API (gN6).
 
 import simplejson
 import lib.apibase as apibase
+import logging
+import sys
 
 
 class CMDB(apibase.API):
@@ -35,35 +37,42 @@ class CMDB(apibase.API):
         self.headers["login.password"] = soa_password
     
     
-    def info_of(self, hostname: str) -> dict:
+    def info_of(self, log: logging.Logger, hostname: str) -> dict:
         """
         Given a specific hostname, gets and returns a JSON object (dict)
         with all information and properties about that host.
         """
         
-        r = self.get(f"gN6/Infraestructuresv1/{hostname}")
+        log.debug(f"Gathering info of '{hostname}' from CMDB")
+        r = self.get(log, f"gN6/Infraestructuresv1/{hostname}")
         try:
             return r.json()
         except simplejson.JSONDecodeError:
-            raise self.NotAvailableError(r.status_code) from None
+            e = self.NotAvailableError(r.status_code)
+            log.critical(e)
+            sys.exit(r.status_code)
     
     
-    def software_of(self, hostname: str) -> list:
+    def software_of(self, log: logging.Logger, hostname: str) -> list:
         """
         Given a specific hostname, gets and returns a list of all software
         associated to that host within CMDB.
         """
         
-        r = self.get(f"gN6/Infraestructuresv1/{hostname}/software")
+        log.debug(f"Gathering software list of '{hostname}' from CMDB")
+        r = self.get(log, f"gN6/Infraestructuresv1/{hostname}/software")
         try:
             return r.json()["llistaRelacions"]
         except simplejson.JSONDecodeError:
-            raise self.NotAvailableError(r.status_code) from None
+            e = self.NotAvailableError(r.status_code)
+            log.critical(e)
+            sys.exit(r.status_code)
         except KeyError:
+            log.warning(f"Host '{hostname}' has no software registered in CMDB")
             return []
     
     
-    def link_host_sw(self, hostname: str, software: str) -> None:
+    def link_host_sw(self, log: logging.Logger, hostname: str, software: str) -> None:
         """
         Given a hostname and a software name, links both in a relationship.
         """        
@@ -72,14 +81,18 @@ class CMDB(apibase.API):
             "idInfra": hostname,
             "nomSoftware": software
         }
-        r = self.post(f"gN6/Infraestructuresv1/{hostname}/software/{software}", data)
+        log.debug(f"Creating or modifying a relation between '{hostname}' and '{software}' from CMDB")
+        r = self.post(log, f"gN6/Infraestructuresv1/{hostname}/software/{software}", data)
         try:
             if r.json()["resultat"] == "SUCCESS":
                 return
             else:
-                raise self.RequestError(r.json()["codiError"], r.json()["resultatMissatge"]) from None
+                e = self.RequestError(r.json()["codiError"], r.json()["resultatMissatge"])
+                log.error(e)
         except simplejson.JSONDecodeError:
-            raise self.NotAvailableError(r.status_code) from None
+            e = self.NotAvailableError(r.status_code)
+            log.critical(e)
+            sys.exit(r.status_code)
     
     
     class RequestError(Exception):

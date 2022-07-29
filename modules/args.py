@@ -7,6 +7,7 @@ Adding and parsing all arguments, making them accessible.
 
 import argparse
 import lib.puppet as puppet
+import modules.logging as logging
 
 
 parser = argparse.ArgumentParser(description = "Syncing script between Puppet & CMDB Databases")
@@ -36,10 +37,14 @@ def init_args(puppet_ep: puppet.Puppet) -> None:
     parsed_args = parser.parse_args()
     
     # === Making arguments accessible through constants === #
+    # Debug mode
+    args["debug"] = parsed_args.debug
+    
+    # Temporal initialization of log
+    log = logging.init()
+    
     # Group
-    if parsed_args.group and parsed_args.group in puppet_ep.groups():
+    if parsed_args.group and parsed_args.group in puppet_ep.groups(log):
         args["group"] = parsed_args.group
     else:
         args["group"] = None
-    # Debug mode
-    args["debug"] = parsed_args.debug

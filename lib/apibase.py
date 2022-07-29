@@ -8,6 +8,8 @@ Base implementation of an API, to be used by more specific API wrappers.
 import requests
 import json
 from http.client import responses
+import logging
+import sys
 
 
 class API:
@@ -36,7 +38,7 @@ class API:
         }
     
     
-    def __request__(self, method: str, uri: str, data: dict = None, params: dict = None) -> requests.Response:
+    def __request__(self, log: logging.Logger, method: str, uri: str, data: dict = None, params: dict = None) -> requests.Response:
         """
         Request base method to be used further on (private).
         """
@@ -50,39 +52,41 @@ class API:
                 headers = self.headers
             )
         except requests.exceptions.ConnectionError:
-            raise self.NotAvailableError(404) from None
+            e = self.NotAvailableError(404)
+            log.critical(e)
+            sys.exit(404)
     
     
-    def get(self, uri: str, params: dict = None) -> requests.Response:
+    def get(self, log: logging.Logger, uri: str, params: dict = None) -> requests.Response:
         """ 
         GET HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("GET", uri, params = params)
+        return self.__request__(log, "GET", uri, params = params)
     
     
-    def post(self, uri: str, data: dict, params: dict = None) -> requests.Response:
+    def post(self, log: logging.Logger, uri: str, data: dict, params: dict = None) -> requests.Response:
         """ 
         POST HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("POST", uri, params = params, data = json.dumps(data))
+        return self.__request__(log, "POST", uri, params = params, data = json.dumps(data))
     
     
-    def put(self, uri: str, data: dict, params: dict = None) -> requests.Response:
+    def put(self, log: logging.Logger, uri: str, data: dict, params: dict = None) -> requests.Response:
         """ 
         PUT HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("PUT", uri, params = params, data = json.dumps(data))
+        return self.__request__(log, "PUT", uri, params = params, data = json.dumps(data))
     
     
-    def delete(self, uri: str, data: dict, params: dict = None) -> requests.Response:
+    def delete(self, log: logging.Logger, uri: str, data: dict, params: dict = None) -> requests.Response:
         """ 
         DELETE HTTP method against the API endpoint specified by the 'uri' argument.
         """
         
-        return self.__request__("DELETE", uri, params = params, data = json.dumps(data))
+        return self.__request__(log, "DELETE", uri, params = params, data = json.dumps(data))
     
     
     class NotAvailableError(Exception):

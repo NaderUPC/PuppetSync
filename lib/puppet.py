@@ -7,6 +7,8 @@ Library made to act as a wrapper for the Puppet API.
 
 import simplejson
 import lib.apibase as apibase
+import logging
+import sys
 
 
 class Puppet(apibase.API):
@@ -30,7 +32,7 @@ class Puppet(apibase.API):
         super().__init__(url, username, password)
     
     
-    def hosts(self, group: str = None) -> list:
+    def hosts(self, log: logging.Logger, group: str = None) -> list:
         """
         Get list of all hosts registered within Puppet. A specific group
         can be provided, to only return the hosts the belong to it.
@@ -39,46 +41,56 @@ class Puppet(apibase.API):
         params = { "per_page": "all" }
         if group:
             params["search"] = f"parent_hostgroup={group}"
-            
-        r = self.get("api/hosts", params = params)
+        
+        log.debug(f"Gathering hosts list (with a group filter -> {group}) from Puppet")
+        r = self.get(log, "api/hosts", params = params)
         try:
             return r.json()["results"]
         except (simplejson.JSONDecodeError, KeyError):
-            raise self.NotAvailableError(r.status_code) from None
+            e = self.NotAvailableError(r.status_code)
+            log.critical(e)
+            sys.exit(r.status_code)
     
     
-    def groups(self) -> list:
+    def groups(self, log: logging.Logger) -> list:
         """
         Get list of groups registered within Puppet.
         """
         
         params = { "per_page": "all" }
-        r = self.get("api/hostgroups", params = params)
+        log.debug("Gathering groups list from Puppet")
+        r = self.get(log, "api/hostgroups", params = params)
         try:
             r = r.json()["results"]
         except (simplejson.JSONDecodeError, KeyError):
-            raise self.NotAvailableError(r.status_code) from None
+            e = self.NotAvailableError(r.status_code)
+            log.critical(e)
+            sys.exit(r.status_code)
         return [x["title"] for x in r]
     
     
-    def facts_of(self, hostname: str) -> dict:
+    def facts_of(self, log: logging.Logger, hostname: str) -> dict:
         """
         Given a specific hostname, gets and returns a JSON object (dict)
         with all Puppet facts associated to that host.
         """
         
         params = { "per_page": "1000" }
-        r = self.get(f"api/hosts/{hostname}/facts", params = params)
+        r = self.get(log, f"api/hosts/{hostname}/facts", params = params)
+        log.debug(f"Gathering facts list of '{hostname}' from Puppet")
         try:
             return r.json()["results"][hostname]
         except (simplejson.JSONDecodeError, KeyError):
-            raise self.NotAvailableError(r.status_code) from None
+            e = self.NotAvailableError(r.status_code)
+            log.critical(e)
+            sys.exit(r.status_code)
     
     
-    def os(self, hostname: str) -> str:
+    def os(self, log: logging.Logger, hostname: str) -> str:
         """
         Given a specific hostname, returns its OS name and version.
         """
         
-        facts = self.facts_of(hostname)
+        facts = self.facts_of(log, hostname)
+        log.debug(f"Gathering OS value from the facts list of '{hostname}' from Puppet")
         return f"{facts['operatingsystem']} {facts['operatingsystemrelease']}"
