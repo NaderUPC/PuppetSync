@@ -5,6 +5,7 @@ import lib.cmdb as cmdb
 import modules.config as config
 import modules.args as args
 import modules.funcs as funcs
+import modules.logging as logging
 
 # Temporal import (for testing purposes)
 from pprint import pprint
@@ -33,6 +34,9 @@ def main():
     # === Arguments === #
     args.init_args(puppet_ep)
     
+    # === Logger === #
+    log = logging.init()
+    
     # === Main loop === #
     for host in puppet_ep.hosts(args.group()):
         if funcs.is_in_cmdb(cmdb_ep, host):
@@ -41,23 +45,18 @@ def main():
             for sw in sw_list:
                 # Operating system
                 if funcs.is_os(sw):
-                    print(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
-                    input("Enter to continue...")
+                    log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
                     funcs.sync_os(puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
                 # Rest of software
                 else:
-                    print(sw["toProductName"])
-                    input()
-                    ####funcs.sync_sw()
+                    pass
             # No software in CMDB
             if not sw_list:
                 # Operating system
-                print(f"Adding OS ({puppet_ep.os(host['name'])}) to '{host['name']}'")
-                input("Enter to continue...")
+                log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB (None) for '{host['name']}'")
                 funcs.sync_os(puppet_ep, cmdb_ep, host["name"])
                 # Rest of software
-                ####funcs.sync_sw()
-
+                pass
 
 if __name__ == "__main__":
     main()
