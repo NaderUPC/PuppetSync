@@ -1,6 +1,6 @@
 """
 Logging Module
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 Management and administration of the logs created by the program.
 The format used is the following:

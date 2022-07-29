@@ -1,6 +1,6 @@
 """
 CMDB (gN6) API Library
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Library made to act as a wrapper for the CMDB API (gN6).
 """
@@ -14,7 +14,7 @@ import sys
 class CMDB(apibase.API):
     """
     CMDB (gN6) API Library
-    ~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~
 
     Library made to act as a wrapper for the CMDB API (gN6).
     
