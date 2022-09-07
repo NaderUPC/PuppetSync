@@ -35,9 +35,8 @@ def main():
     # === Logger === #
     log = logging.init()
     
-    # === Main loop's function === #
+    # === Main sync function === #
     def sync(host: str):
-        global log, puppet_ep, cmdb_ep
         if funcs.is_in_cmdb(log, cmdb_ep, host):
             sw_list = cmdb_ep.software_of(log, host["name"])
             # Has software in CMDB
@@ -58,10 +57,8 @@ def main():
                 pass
     
     # === Threads execution === #
-    N = len(puppet_ep.hosts(log, args.group()))
-    iterable = puppet_ep.hosts(log, args.group())
-    stormstroopers = threading.init(N)
-    stormstroopers.map(sync, iterable)
+    iterable, threads = threading.init(log, puppet_ep, args.group())
+    threads.map(sync, iterable)
 
 
 if __name__ == "__main__":
