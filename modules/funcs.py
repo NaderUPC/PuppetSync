@@ -41,7 +41,7 @@ def sync_os(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
     
     if puppet_ep.os(log, hostname) != cmdb_os or not cmdb_os:
         log.debug(f"Starting sync of '{hostname}' OS")
-        cmdb_ep.link_host_sw(hostname, puppet_ep.os(hostname))
+        cmdb_ep.link_host_sw(hostname, puppet_ep.os(log, hostname))
     else:
         log.debug(f"Host's ({hostname}) OS ({puppet_ep.os(log, hostname)}) is already in sync, no need to do anything.")
 
