@@ -3,7 +3,8 @@
 
 Refactor and improvement of the puppet-gn6 sync tool in Python currently in production.
 
-Es necesario disponer de un archivo de configuración donde se deben especificar las siguientes constantes:
+It is required to have a configuration file, which must have the following structure:
+
 
 `config.yaml`
 ```yaml
@@ -22,7 +23,11 @@ cmdb:
 
 ### Logging Levels Information:
 - **DEBUG** -> Very verbose messages: *for debugging purposes*
-- **INFO** -> Normal messages
+- **INFO** -> Informative messages
 - **WARNING** -> Host without software in CMDB
 - **ERROR** -> RequestError(error_code, error_msg): *CMDB Requests*
 - **CRITICAL** -> NotAvailableError(status_code): *HTTP Requests*
+
+### Arguments:
+- `-d` or `--debug`: Enables **DEBUG** level for logging. When it is not specified, it uses the default **INFO** level.
+- `-g` or `--group`: Specify the parent hostgroup in order to perform a smaller search in the Puppet's Foreman API. If not specified, it will request the full list of hosts without any group filtering.
