@@ -6,6 +6,7 @@ import modules.config as config
 import modules.args as args
 import modules.funcs as funcs
 import modules.logging as logging
+import modules.threading as threading
 
 
 # === Ctrl+C === #    
@@ -34,8 +35,8 @@ def main():
     # === Logger === #
     log = logging.init()
     
-    # === Main loop === #
-    for host in puppet_ep.hosts(log, args.group()):
+    # === Main sync function === #
+    def sync(host: str):
         if funcs.is_in_cmdb(log, cmdb_ep, host):
             sw_list = cmdb_ep.software_of(log, host["name"])
             # Has software in CMDB
@@ -54,6 +55,11 @@ def main():
                 funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"])
                 # Rest of software
                 pass
+    
+    # === Threads execution === #
+    iterable, threads = threading.init(log, puppet_ep, args.group())
+    threads.map(sync, iterable)
+
 
 if __name__ == "__main__":
     main()
