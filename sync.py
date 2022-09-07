@@ -6,6 +6,7 @@ import modules.config as config
 import modules.args as args
 import modules.funcs as funcs
 import modules.logging as logging
+import modules.threading as threading
 
 
 # === Ctrl+C === #    
@@ -13,8 +14,25 @@ funcs.ctrl_c()
 
 
 # === Main loop's function === #
-def sync(log: logging.logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB):
-    pass
+def sync(host: str, log: logging.logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB):
+    if funcs.is_in_cmdb(log, cmdb_ep, host):
+            sw_list = cmdb_ep.software_of(log, host["name"])
+            # Has software in CMDB
+            for sw in sw_list:
+                # Operating system
+                if funcs.is_os(sw):
+                    log.info(f"Syncing OS between Puppet ({puppet_ep.os(log, host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
+                    funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
+                # Rest of software
+                else:
+                    pass
+            # No software in CMDB
+            if not sw_list:
+                # Operating system
+                log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB (None) for '{host['name']}'")
+                funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"])
+                # Rest of software
+                pass
 
 
 # === MAIN === #
@@ -39,26 +57,7 @@ def main():
     # === Logger === #
     log = logging.init()
     
-    # === Main loop === #
-    for host in puppet_ep.hosts(log, args.group()):
-        if funcs.is_in_cmdb(log, cmdb_ep, host):
-            sw_list = cmdb_ep.software_of(log, host["name"])
-            # Has software in CMDB
-            for sw in sw_list:
-                # Operating system
-                if funcs.is_os(sw):
-                    log.info(f"Syncing OS between Puppet ({puppet_ep.os(log, host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
-                    funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
-                # Rest of software
-                else:
-                    pass
-            # No software in CMDB
-            if not sw_list:
-                # Operating system
-                log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB (None) for '{host['name']}'")
-                funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"])
-                # Rest of software
-                pass
+    stormstroopers = threading.init()
 
 if __name__ == "__main__":
     main()
