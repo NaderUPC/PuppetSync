@@ -2,7 +2,8 @@
 Threading Module
 ~~~~~~~~~~~~~~~~
 
-(...)
+Handling of the multithreading capability. Enables the ability to perform hosts
+synchronization in parallel with multiple threads.
 """
 
 import lib.puppet as puppet
