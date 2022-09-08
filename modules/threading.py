@@ -12,5 +12,5 @@ import logging
 
 
 def init(log: logging.Logger, puppet_ep: puppet.Puppet, group: str):
-    iterable = puppet_ep.hosts(log, group)
-    return iterable, ThreadPoolExecutor(max_workers = len(iterable))
+    hosts = puppet_ep.hosts(log, group)
+    return hosts, ThreadPoolExecutor(max_workers = len(hosts))

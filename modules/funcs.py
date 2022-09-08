@@ -39,6 +39,8 @@ def sync_os(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
     Instead, if they differ, the one that prevails is the one present within Puppet. 
     """
     
+    log.info(f"Syncing OS between Puppet ({puppet_ep.os(log, hostname)}) and CMDB ({cmdb_os}) for '{hostname}'")
+    
     if puppet_ep.os(log, hostname) != cmdb_os or not cmdb_os:
         log.debug(f"Starting sync of '{hostname}' OS")
         cmdb_ep.link_host_sw(log, hostname, puppet_ep.os(log, hostname))

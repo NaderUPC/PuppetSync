@@ -36,14 +36,13 @@ def main():
     log = logging.init()
     
     # === Main sync function === #
-    def sync(host: str):
+    def sync(host: str) -> None:
         if funcs.is_in_cmdb(log, cmdb_ep, host):
             sw_list = cmdb_ep.software_of(log, host["name"])
             # Has software in CMDB
             for sw in sw_list:
                 # Operating system
                 if funcs.is_os(sw):
-                    log.info(f"Syncing OS between Puppet ({puppet_ep.os(log, host['name'])}) and CMDB ({sw['toProductName']}) for '{host['name']}'")
                     funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
                 # Rest of software
                 else:
@@ -51,14 +50,13 @@ def main():
             # No software in CMDB
             if not sw_list:
                 # Operating system
-                log.info(f"Syncing OS between Puppet ({puppet_ep.os(host['name'])}) and CMDB (None) for '{host['name']}'")
                 funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"])
                 # Rest of software
                 pass
     
     # === Threads execution === #
-    iterable, threads = threading.init(log, puppet_ep, args.group())
-    threads.map(sync, iterable)
+    hosts, threads = threading.init(log, puppet_ep, args.group())
+    threads.map(sync, hosts)
 
 
 if __name__ == "__main__":
