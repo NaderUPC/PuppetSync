@@ -10,7 +10,7 @@ import lib.puppet as puppet
 import modules.logging as logging
 
 
-parser = argparse.ArgumentParser(description = "Syncing script between Puppet & CMDB Databases")
+parser = argparse.ArgumentParser(description = "Syncing app between Puppet & CMDB Databases")
 
 args = {}
 group = lambda: args["group"]
