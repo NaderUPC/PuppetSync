@@ -1,6 +1,7 @@
 version: '3'
 services:
   puppetsync:
+    image: puppetsync:1.0.0
     build: .
     entrypoint: python3 sync.py
     volumes:

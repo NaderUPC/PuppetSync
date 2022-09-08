@@ -5,7 +5,6 @@ Syncing app between Puppet & CMDB Databases.
 
 It is required to have a configuration file, which must have the following structure:
 
-
 `config.yaml`
 ```yaml
 puppet:
@@ -31,3 +30,14 @@ cmdb:
 ### Arguments:
 - `-d` or `--debug`: Enables **DEBUG** level for logging. When it is not specified, it uses the default **INFO** level.
 - `-g` or `--group`: Specify the parent hostgroup in order to perform a smaller search in the Puppet's Foreman API. If not specified, it will request the full list of hosts without any group filtering.
+
+### Docker
+#### Building & Running
+```console
+docker build -t puppetsync:1.0.0
+docker run -v /dev/log:/dev/log puppetsync:1.0.0
+```
+### Docker Compose
+```console
+docker compose up
+```
