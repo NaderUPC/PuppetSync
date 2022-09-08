@@ -1,0 +1,7 @@
+version: '3'
+services:
+  puppetsync:
+    build: .
+    entrypoint: python3 sync.py
+    volumes:
+      - /dev/log:/dev/log
