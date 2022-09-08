@@ -16,6 +16,7 @@ WORKDIR /app
 # Adding source code to image
 COPY . .
 # Installing requirements
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt 2>/dev/null
 
-CMD [ "python3", "sync.py" ]
+# === Image entrypoint === #
+ENTRYPOINT [ "python3", "sync.py" ]
