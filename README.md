@@ -1,7 +1,7 @@
 # PuppetSync
-## Puppet <--> CMDB syncing tool
+### Puppet <--> CMDB syncing tool
 
-Refactor and improvement of the puppet-gn6 sync tool in Python currently in production.
+Syncing app between Puppet & CMDB Databases.
 
 It is required to have a configuration file, which must have the following structure:
 
