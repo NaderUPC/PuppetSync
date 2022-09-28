@@ -46,13 +46,13 @@ def main():
                     funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
                 # Rest of software
                 else:
-                    pass
+                    funcs.sync_sw(log, puppet_ep, cmdb_ep, host["name"], sw["toProductName"])
             # No software in CMDB
             if not sw_list:
                 # Operating system
                 funcs.sync_os(log, puppet_ep, cmdb_ep, host["name"])
                 # Rest of software
-                pass
+                funcs.sync_sw(log, puppet_ep, cmdb_ep, host["name"])
     
     # === Threads execution === #
     hosts, threads = threading.init(log, puppet_ep, args.group())
