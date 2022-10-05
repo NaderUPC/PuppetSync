@@ -53,4 +53,6 @@ def sync_sw(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
     (...)
     """
     
+    log.info(f"Syncing SW between Puppet () and CMDB ({cmdb_sw}) for '{hostname}'")
+    
     pass

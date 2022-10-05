@@ -9,6 +9,7 @@ import simplejson
 import lib.apibase as apibase
 import logging
 import sys
+import re
 
 
 class Puppet(apibase.API):
@@ -94,3 +95,13 @@ class Puppet(apibase.API):
         facts = self.facts_of(log, hostname)
         log.debug(f"Gathering OS value from the facts list of '{hostname}' from Puppet")
         return f"{facts['operatingsystem']} {facts['operatingsystemrelease']}"
+    
+    
+    def software(self, log: logging.Logger, hostname: str):
+        """
+        Given a specific hostname, returns a list of its installed packages.
+        """
+        
+        facts = self.facts_of(log, hostname)
+        log.debug(f"Gathering software from the facts list of '{hostname}' from Puppet")
+        pass
