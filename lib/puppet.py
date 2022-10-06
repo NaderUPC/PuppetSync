@@ -99,9 +99,34 @@ class Puppet(apibase.API):
     
     def software(self, log: logging.Logger, hostname: str):
         """
-        Given a specific hostname, returns a list of its installed packages.
+        Given a specific hostname, returns a list of its recognized software
+        in a tuple form: `(sw_name, sw_version)`.
         """
         
         facts = self.facts_of(log, hostname)
         log.debug(f"Gathering software from the facts list of '{hostname}' from Puppet")
-        pass
+        
+        is_software = lambda fact: "_version" in fact and '::' not in fact
+        is_not_coherent = lambda version: version == "false"
+        
+        def is_already_registered(name: str, software: list) -> bool:
+            is_already_registered = lambda sw1, sw2: sw1[0] in sw2 or sw1[0] == sw2 or sw2 in sw1[0]
+            already_registered = False
+            for sw in software:
+                if is_already_registered(sw, name):
+                    already_registered = True
+                    break
+            return already_registered
+        
+        software = []
+        for fact in facts:
+            if is_software(fact):
+                name = fact.split('_')[0]
+                if is_already_registered(name, software): continue
+                version = facts[fact]
+                if is_not_coherent(version):
+                    version = ""
+                sw = (name, version)
+                software.append(sw)
+        
+        return software

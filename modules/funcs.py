@@ -40,12 +40,13 @@ def sync_os(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
     """
     
     log.info(f"Syncing OS between Puppet ({puppet_ep.os(log, hostname)}) and CMDB ({cmdb_os}) for '{hostname}'")
+    puppet_os = puppet_ep.os(log, hostname)
     
-    if puppet_ep.os(log, hostname) != cmdb_os or not cmdb_os:
+    if puppet_os != cmdb_os or not cmdb_os:
         log.debug(f"Starting sync of '{hostname}' OS")
-        cmdb_ep.link_host_sw(log, hostname, puppet_ep.os(log, hostname))
+        cmdb_ep.link_host_sw(log, hostname, puppet_os)
     else:
-        log.debug(f"Host's ({hostname}) OS ({puppet_ep.os(log, hostname)}) is already in sync, no need to do anything.")
+        log.debug(f"Host's ({hostname}) OS ({puppet_os}) is already in sync, no need to do anything.")
 
 
 def sync_sw(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, hostname: str, cmdb_sw: str = None) -> None:
@@ -53,6 +54,19 @@ def sync_sw(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
     (...)
     """
     
-    log.info(f"Syncing SW between Puppet () and CMDB ({cmdb_sw}) for '{hostname}'")
-    
-    pass
+    puppet_software = puppet_ep.software(log, hostname)
+    # There is no software registered in Puppet, nothing to do.
+    if not puppet_software:
+        log.warning(f"Host '{hostname}' has no software registered in Puppet")
+        return
+    for sw in puppet_software:
+        puppet_sw = sw[0]
+        log.info(f"Syncing SW between Puppet ({puppet_sw}) and CMDB ({cmdb_sw}) for '{hostname}'")
+        
+        # No software in CMDB, try to link host with puppet_sw.
+        if not cmdb_sw:
+            pass
+            
+        # Try to sync puppet_sw with cmdb_sw.
+        else:
+            pass
