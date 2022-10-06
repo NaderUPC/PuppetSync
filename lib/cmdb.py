@@ -93,8 +93,8 @@ class CMDB(apibase.API):
             e = self.NotAvailableError(r.status_code)
             log.critical(e)
             sys.exit(r.status_code)
-    
-    
+
+
     class RequestError(Exception):
         """
         Exception made to be raised when a request to the CMDB's API that carries data

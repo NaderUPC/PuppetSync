@@ -63,10 +63,8 @@ def sync_sw(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
         puppet_sw = sw[0]
         log.info(f"Syncing SW between Puppet ({puppet_sw}) and CMDB ({cmdb_sw}) for '{hostname}'")
         
-        # No software in CMDB, try to link host with puppet_sw.
-        if not cmdb_sw:
-            pass
-            
-        # Try to sync puppet_sw with cmdb_sw.
+        if puppet_sw != cmdb_sw or not cmdb_sw:
+            log.debug(f"Starting sync of '{hostname}' SW ({puppet_sw})")
+            cmdb_ep.link_host_sw(log, hostname, puppet_sw)
         else:
-            pass
+            log.debug(f"Host's ({hostname}) SW ({puppet_sw}) is already in sync, no need to do anything.")
