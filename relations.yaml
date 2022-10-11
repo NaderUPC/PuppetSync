@@ -1,0 +1,61 @@
+# === Puppet-CMDB Name Relations === #
+
+tomcat6_exists: Tomcat 6
+tomcat7_exists: Tomcat 7
+tomcat8_exists: Tomcat 8
+nginx_exists: Nginx
+networker_exists: Networker
+apache22_exists: Apache 2.2
+apache24_exists: Apache 2.4
+nagios_exists: Nagios
+php51_exists: PHP 5.1
+php53_exists: PHP 5.3
+php55_exists: PHP 5.5
+php56_exists: PHP 5.6
+php70_exists: PHP 7.0
+php71_exists: PHP 7.1
+php72_exists: PHP 7.2
+php73_exists: PHP 7.3
+php74_exists: PHP 7.4
+puppetversion: Puppet 3
+postgres83_exists: PostgreSQL 8.3
+postgres84_exists: PostgreSQL 8.4
+postgres91_exists: PostgreSQL 9.1
+postgres92_exists: PostgreSQL 9.2
+postgres93_exists: PostgreSQL 9.3
+postgres94_exists: PostgreSQL 9.4
+postgres95_exists: PostgreSQL 9.5
+postgres96_exists: PostgreSQL 9.6
+postgres10_exists: PostgreSQL 10
+postgres104_exists: PostgreSQL 10.4
+postgres105_exists: PostgreSQL 10.5
+postgres106_exists: PostgreSQL 10.6
+postgres107_exists: PostgreSQL 10.7
+postgres11_exists: PostgreSQL 11
+postgres117_exists: PostgreSQL 11.7
+postgres12_exists: PostgreSQL 12
+postgres125_exists: PostgreSQL 12.5
+postgres13_exists: PostgreSQL 13
+oracle_java6_exists: Oracle Java 6
+open_java6_exists: OpenJDK 1.6
+oracle_java7_exists: Oracle Java 7
+open_java7_exists: OpenJDK 1.7
+oracle_java8_exists: Oracle Java 8
+open_java8_exists: OpenJDK 1.8
+mysql50_exists: MySQL Server 5.0
+mysql51_exists: MySQL Server 5.1
+mysql52_exists: MySQL Server 5.2
+mysql53_exists: MySQL Server 5.3
+mysql54_exists: MySQL Server 5.4
+mysql55_exists: MySQL Server 5.5
+mysql56_exists: MySQL Server 5.6
+mysql57_exists: MySQL Server 5.7
+mysql101_exists: MySQL Server 10.1
+mongo24_exists: Mongo DB 2.4
+mongo32_exists: Mongo DB 3.2
+mongov34_exists: Mongo DB 3.4
+wordpress40_exists: Wordpress 4.0
+wordpress44_exists: Wordpress 4.4
+joomla25_exists: Joomla 2.5
+joomla34_exists: Joomla 3.4
+memcached_exists: memcached
