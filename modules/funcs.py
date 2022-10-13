@@ -73,7 +73,7 @@ def sync_sw(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
             log.warning(f"Software '{sw[0]}' of host '{hostname}' does not exist in 'relations.yaml'")
             continue
         else:
-            log.info(f"Syncing SW between Puppet ({puppet_sw}) and CMDB ({cmdb_sw}) for '{hostname}'")
+            log.info(f"Syncing SW between Puppet ({puppet_sw}) and CMDB for '{hostname}'")
             
             if puppet_sw != cmdb_sw or not cmdb_sw:
                 log.debug(f"Starting sync of '{hostname}' SW ({puppet_sw})")
