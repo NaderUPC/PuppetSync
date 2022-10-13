@@ -11,6 +11,7 @@ import signal
 import lib.puppet as puppet
 import lib.cmdb as cmdb
 import logging
+import yaml
 
 
 # === Lambda/Arrow function definitions === #
@@ -51,20 +52,31 @@ def sync_os(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, h
 
 def sync_sw(log: logging.Logger, puppet_ep: puppet.Puppet, cmdb_ep: cmdb.CMDB, hostname: str, cmdb_sw: str = None) -> None:
     """
-    (...)
+    Synchronizes the host's software in CMDB with the ones registered in Puppet.
+    If they are equal, then it does not do anything (since it already has the correct SW).
+    Instead, if they differ, the one that prevails is the one present within Puppet.
     """
     
-    puppet_software = puppet_ep.software(log, hostname)
-    if not puppet_software:
+    software = puppet_ep.software(log, hostname)
+    if not software:
         log.warning(f"Host '{hostname}' has no software registered in Puppet")
         return
     
-    for sw in puppet_software:
-        puppet_sw = sw[0]
-        log.info(f"Syncing SW between Puppet ({puppet_sw}) and CMDB ({cmdb_sw}) for '{hostname}'")
-        
-        if puppet_sw != cmdb_sw or not cmdb_sw:
-            log.debug(f"Starting sync of '{hostname}' SW ({puppet_sw})")
-            cmdb_ep.link_host_sw(log, hostname, puppet_sw)
+    relations = yaml.safe_load(open("relations.yaml"))
+    
+    for sw in software:
+        puppet_sw = None
+        for item in relations:
+            if sw[0] == item:
+                puppet_sw = relations[item]
+        if not puppet_sw:
+            log.warning(f"Software '{sw[0]}' of host '{hostname}' does not exist in 'relations.yaml'")
+            continue
         else:
-            log.debug(f"Host's ({hostname}) SW ({puppet_sw}) is already in sync, no need to do anything.")
+            log.info(f"Syncing SW between Puppet ({puppet_sw}) and CMDB ({cmdb_sw}) for '{hostname}'")
+            
+            if puppet_sw != cmdb_sw or not cmdb_sw:
+                log.debug(f"Starting sync of '{hostname}' SW ({puppet_sw})")
+                cmdb_ep.link_host_sw(log, hostname, puppet_sw)
+            else:
+                log.debug(f"Host's ({hostname}) SW ({puppet_sw}) is already in sync, no need to do anything.")
