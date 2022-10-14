@@ -35,11 +35,11 @@ cmdb:
 ```console
 docker build -t puppetsync:1.0.0
 ```
-#### Docker
+##### Docker
 ```console
 docker run -v /dev/log:/dev/log puppetsync:1.0.0
 ```
-#### Docker Compose
+##### Docker Compose
 ```console
 docker compose up
 ```
