@@ -31,13 +31,15 @@ cmdb:
 - `-d` or `--debug`: Enables **DEBUG** level for logging. When it is not specified, it uses the default **INFO** level.
 - `-g` or `--group`: Specify the parent hostgroup in order to perform a smaller search in the Puppet's Foreman API. If not specified, it will request the full list of hosts without any group filtering.
 
-### Docker
-#### Building & Running
+### Building the image
 ```console
 docker build -t puppetsync:1.0.0
+```
+#### Docker
+```console
 docker run -v /dev/log:/dev/log puppetsync:1.0.0
 ```
-### Docker Compose
+#### Docker Compose
 ```console
 docker compose up
 ```
