@@ -8,12 +8,12 @@ It is required to have a configuration file, which must have the following struc
 `config.yaml`
 ```yaml
 puppet:
-    url: https://puppet.pre.upc.edu/
+    url: https://puppet.upc.edu/
     username: <XXX>
     password: <XXX>
 
 cmdb:
-    url: https://bus-soades.upc.edu/
+    url: https://bus-soa.upc.edu/
     username: <XXX>
     password: <XXX>
     soa_username: <XXX>
