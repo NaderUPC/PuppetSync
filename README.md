@@ -23,7 +23,7 @@ cmdb:
 ### Logging Levels Information:
 - **DEBUG** -> Very verbose messages: *for debugging purposes*
 - **INFO** -> Informative messages
-- **WARNING** -> Host without software in CMDB
+- **WARNING** -> Host without software in CMDB | Relation is not correct within `relations.yaml`
 - **ERROR** -> RequestError(error_code, error_msg): *CMDB Requests*
 - **CRITICAL** -> NotAvailableError(status_code): *HTTP Requests*
 
