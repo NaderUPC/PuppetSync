@@ -17,7 +17,7 @@ php71_exists: PHP 7.1
 php72_exists: PHP 7.2
 php73_exists: PHP 7.3
 php74_exists: PHP 7.4
-puppetversion: Puppet 3
+puppetversion: Puppet
 postgres83_exists: PostgreSQL 8.3
 postgres84_exists: PostgreSQL 8.4
 postgres91_exists: PostgreSQL 9.1
