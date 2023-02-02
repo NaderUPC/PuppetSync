@@ -2,7 +2,7 @@
 image: docker:latest
 
 variables:
-  PROJECT: "PuppetSync"
+  PROJECT: "puppetsync"
   DEPLOYMENT: "puppetsync-pre"
   CONTAINER: "puppetsync"
 
