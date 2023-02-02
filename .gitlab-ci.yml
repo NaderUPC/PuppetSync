@@ -1,0 +1,42 @@
+---
+image: docker:latest
+
+variables:
+  PROJECT: "PuppetSync"
+  DEPLOYMENT: "puppetsync-pre"
+  CONTAINER: "puppetsync"
+
+  # git tag -a v0.1 -m "PuppetSync 0.1"
+  # git push --follow-tags
+  VERSION: $CI_COMMIT_TAG
+  # RUNDECK_DEPLOY_PRE: ""
+
+stages:
+  - build_pre
+  - test_pre
+  # - deploy_pre
+
+build_pre:
+  image: docker:latest
+
+  tags:
+    - UPCnet
+  stage: build_pre
+  only:
+    - tags
+  script:
+    - "docker build -t $DOCKER_ARTIFACTORYURL/$PROJECT -t $DOCKER_ARTIFACTORYURL/$PROJECT:$VERSION ."
+    - "docker login -u $DOCKER_ARTIFACTORYUSER -p $DOCKER_ARTIFACTORYPASSWORD $DOCKER_ARTIFACTORYURL"
+    - "docker push --all-tags $DOCKER_ARTIFACTORYURL/$PROJECT"
+
+# deploy_pre:
+#   image: alpine:latest
+#   tags:
+#     - UPCnet
+#   stage: deploy_pre
+#   only:
+#     - manual
+#   script:
+#     - apk update
+#     - apk add curl
+#     - "curl -i -v -H \"Content-Type: application/json\" -H \"X-Rundeck-Auth-Token: $RUNDECK_TOKEN\" -X POST -d \"{ argString: \\\"-K8sImageVersion $VERSION -K8sContainerName $CONTAINER -K8sDeploymentName $DEPLOYMENT\\\" }\" $RUNDECK_API/$RUNDECK_DEPLOY_PRE/run"
